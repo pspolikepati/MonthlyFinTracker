@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, View, TextInput,Button } from 'react-native';
+import { Image, StyleSheet, Text, TouchableHighlight, View, TextInput,Button, FlatList } from 'react-native';
 import CurrencyInput from 'react-currency-input-field';
 
 function myMoney({placeholder, onValueChange}: {placeholder:string, onValueChange: (value: string | undefined) => void}) {
@@ -22,16 +22,50 @@ export default class App extends Component{
     monthlyExpenses: 0,
     daysSinceStart: 0,
     totalDaysInMonth: 0,
-    isOnTrack: null
+    isOnTrack: null,
+    history: [],
+    currentScreen: 'main',
   };
   handleComparison = () => {
     const {monthlyBudget, monthlyExpenses, daysSinceStart, totalDaysInMonth} = this.state;
     const expensesRatio = monthlyBudget > 0 ? monthlyExpenses/monthlyBudget : 0;
     const daysRatio = totalDaysInMonth > 0 ? daysSinceStart/totalDaysInMonth : 0;
-    this.setState({isOnTrack: expensesRatio <= daysRatio});
+    const isOnTrack = expensesRatio <= daysRatio;
+    const newEntry = {
+        monthlyBudget,
+        monthlyExpenses,
+        daysSinceStart,
+        totalDaysInMonth,
+        status: isOnTrack ? 'On track' : 'Overspending',
+    };
+    this.setState({
+        isOnTrack,
+        history: [...this.state.history, newEntry],
+    });
   };
-  
-  render() {
+  renderHistoryScreen = () => {
+    const{history} = this.state;
+    return(
+        <View style={styles.container}>
+            <View style={styles.header}>
+                  <Text style={styles.headerText}>History</Text>
+            </View>
+            <FlatList
+                data={history}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({item}) => (
+                    <View style={styles.historyItem}>
+                        <Text style={styles.historyText}>
+                            Budget: ${item.monthlyBudget}, Expenses: ${item.monthlyExpenses}, Days Since Start: {item.daysSinceStart}, Total Days in the Month: {item.totalDaysInMonth}, Status: {item.status}
+                        </Text>
+                    </View>
+                )}
+            />
+            <Button title="Back" color='#1DB954' onPress={() => this.setState({currentScreen: 'main'})}/>
+        </View>
+    )
+  }
+  renderMainScreen = () => {
     const {isOnTrack} = this.state;
     if(isOnTrack === true){
         return(
@@ -97,8 +131,16 @@ export default class App extends Component{
                     }}
                 />
                 <Button title="Check Status" color='#1DB954' onPress={this.handleComparison}/>
+                <Button title="History" color='#1DB954' onPress={() =>this.setState({currentScreen: 'history'})}/>
           </View>
       );
+  };
+  render(){
+    const{currentScreen} = this.state;
+    if(currentScreen === 'history'){
+        return this.renderHistoryScreen();
+    }
+    return this.renderMainScreen();
   }
 }
 
@@ -130,4 +172,13 @@ const styles = StyleSheet.create({
       borderRadius: 50,
       marginBottom: 20,
   },
+  historyItem:{
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+  },
+  historyText: {
+    fontSize: 16,
+    color: 'white',
+  }
 });
