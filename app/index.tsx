@@ -99,7 +99,7 @@ export default class App extends Component{
     return (
           <View style={styles.container}>
               <View style={styles.header}>
-                  <Text style={styles.headerText}>My Monthly Financial Tracker</Text>
+                  <Text style={styles.headerText}>Monetly</Text>
               </View>
                 {myMoney({
                     placeholder: 'Enter your monthly budget',
