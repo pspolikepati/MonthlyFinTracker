@@ -109,7 +109,7 @@ export default class App extends Component{
                     },
                 })}
                 {myMoney({
-                    placeholder: 'Enter your monthly expenses',
+                    placeholder: 'Enter your monthly expenses so far',
                     onValueChange: (value) => {
                         const numericValue = value ? parseFloat(value) : 0;
                         this.setState({monthlyExpenses: numericValue});
