@@ -56,7 +56,10 @@ export default class App extends Component{
                 renderItem={({item}) => (
                     <View style={styles.historyItem}>
                         <Text style={styles.historyText}>
-                            Budget: ${item.monthlyBudget}, Expenses: ${item.monthlyExpenses}, Days Since Start: {item.daysSinceStart}, Total Days in the Month: {item.totalDaysInMonth}, Status: {item.status}
+                            Day {item.daysSinceStart} of {item.totalDaysInMonth}
+                        </Text>
+                        <Text style={styles.historyText}>
+                            Budget: ${item.monthlyBudget}, Expenses: ${item.monthlyExpenses}, Status: {item.status}
                         </Text>
                     </View>
                 )}
